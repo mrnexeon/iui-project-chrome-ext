@@ -1,0 +1,16 @@
+{
+    "background": {
+        "service_worker": "background/index.ts"
+    },
+    "content_scripts": [
+        {
+            "js": ["content/index.ts"],
+            "matches": ["https://*/*", "http://*/*"]
+        }
+    ],
+    "action": {
+        "default_popup": "pages/popup/index.html"
+    },
+    "name": "youlearn",
+    "manifest_version": 3
+}
