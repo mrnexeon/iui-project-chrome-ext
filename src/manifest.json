@@ -1,6 +1,6 @@
 {
     "background": {
-        "service_worker": "background/index.ts"
+        "service_worker": "background.ts"
     },
     "content_scripts": [
         {
@@ -12,5 +12,6 @@
         "default_popup": "pages/popup/index.html"
     },
     "name": "youlearn",
-    "manifest_version": 3
+    "manifest_version": 3,
+    "minimum_chrome_version": "93"
 }
