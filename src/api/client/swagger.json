@@ -1,12 +1,12 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "version" : "1.0",
+    "version" : "1.1",
     "title" : "YouLearn REST API",
     "description" : "The system that automatically judjes if the YouTube video distractful for an education"
   },
   "paths" : {
-    "/api/filterVideos" : {
+    "/api/filterDistractfulVideos" : {
       "post" : {
         "summary" : "Returns multiple decisions for the batch of the videos",
         "consumes" : [ "application/json" ],
@@ -15,23 +15,35 @@
           "name" : "videoIds",
           "description" : "Batch of the video Ids",
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
+            "type" : "object",
+            "properties" : {
+              "recommended_ids" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                },
+                "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4", "arDNwjTaHQg" ]
+              }
             },
-            "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4", "arDNwjTaHQg" ]
+            "required" : [ "recommended_ids" ]
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "OK",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
+              "type" : "object",
+              "properties" : {
+                "distractful_ids" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  },
+                  "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4" ],
+                  "description" : "The list of the videos that the system found distractful"
+                }
               },
-              "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4" ],
-              "description" : "The list of the videos that the system found distractful"
+              "required" : [ "distractful_ids" ]
             }
           },
           "500" : {
@@ -54,7 +66,16 @@
           "name" : "feedback",
           "description" : "The YouTube video feedback about the distraction",
           "schema" : {
-            "$ref" : "#/definitions/Feedback"
+            "type" : "object",
+            "properties" : {
+              "video_id" : {
+                "type" : "string"
+              },
+              "distractful" : {
+                "type" : "boolean"
+              }
+            },
+            "required" : [ "video_id", "distractful" ]
           }
         } ],
         "responses" : {
@@ -65,20 +86,7 @@
       }
     }
   },
-  "definitions" : {
-    "Feedback" : {
-      "properties" : {
-        "video_id" : {
-          "type" : "string"
-        },
-        "distractful" : {
-          "type" : "boolean"
-        }
-      },
-      "required" : [ "video_id", "distractful" ]
-    }
-  },
   "host" : "virtserver.swaggerhub.com",
-  "basePath" : "/mrnexeon/YouLearn/1.0",
+  "basePath" : "/mrnexeon/YouLearn/1.1",
   "schemes" : [ "https" ]
 }
