@@ -25,7 +25,7 @@ export const observeDOM = (
         return mutationObserver;
     }
 
-    // Fallback
+    // Fallback for old browsers
     observedNode.addEventListener('DOMNodeInserted', callback, false);
     observedNode.addEventListener('DOMNodeRemoved', callback, false);
 

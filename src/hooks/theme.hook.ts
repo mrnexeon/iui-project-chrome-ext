@@ -32,7 +32,6 @@ export const usePreferredTheme = (): Theme => {
         window
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', (e) => {
-                console.log(e);
                 setTheme(e.matches ? darkTheme : lightTheme);
             });
     }, []);

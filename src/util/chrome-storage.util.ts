@@ -52,6 +52,11 @@ const isFilterEnabled = {
         return [_val, setVal];
     },
 
+    /**
+     * EventListener that reacts on changes to isFilterEnabled
+     *
+     * @param callback
+     */
     onChange: (callback: () => void): void => {
         const internalCallback = (changes: {
             [name: string]: chrome.storage.StorageChange;
