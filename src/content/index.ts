@@ -31,5 +31,14 @@ chromeStorage.isFilterEnabled.onChange(() => {
         return;
     }
 
-    window.location.reload();
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('t', `${Math.floor(youtubeDom.player.getTimestamp())}`);
+
+    const url = [
+        window.location.origin,
+        window.location.pathname,
+        '?',
+        searchParams.toString(),
+    ].join();
+    window.location.replace(url);
 });
