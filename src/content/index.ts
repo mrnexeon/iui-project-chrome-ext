@@ -20,6 +20,11 @@ const main = async () => {
         // TODO
         // API Logic goes HERE
 
+        // REST API requests examples:
+
+        // filterEducationalVideos(['test1', 'test2']).then(educatonal_ids => console.log(educatonal_ids)).catch(err => console.error(err))
+        // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
+
         youtubeDom.recommendations.hide(recommendedIds);
     });
 };
