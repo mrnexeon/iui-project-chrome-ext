@@ -18,18 +18,14 @@ export function reportFeedback(video_id: string, distractful: boolean): Promise<
 }
 
 /**
- * Requests REST API server to filter educational videos from the video list
+ * Requests REST API server to filter distractful videos from the video list
  * 
- * @param videoIds YouTube videos IDs list
- * @returns educational videos IDs for displaying which are *not* distractful
+ * @param recommended_video_ids videos IDs recommmended by the YouTube
+ * @returns distractful videos IDs
  */
-export function filterEducationalVideos(videoIds: string[]): Promise<string[]> {
+export function filterDistractfulVideos(recommended_video_ids: string[]): Promise<string[]> {
     return new Promise((resolve, reject) => {
-
-        // NB! the Endpoint name in REST API spec is not correct from the meaning, 
-        // the endpoint does not filters distractful, but filters educational videos
-
-        client.api.filterDistractfulVideosCreate({ recommended_ids: videoIds })
+        client.api.filterDistractfulVideosCreate({ recommended_ids: recommended_video_ids })
             .then(res => res.json())
             .catch(err => reject(err))
             .then(json => resolve(json.distractful_ids))

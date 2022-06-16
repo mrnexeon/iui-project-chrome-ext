@@ -8,17 +8,18 @@
   "paths" : {
     "/api/filterDistractfulVideos" : {
       "post" : {
-        "summary" : "Returns multiple decisions for the batch of the videos",
+        "summary" : "Filters Distractful Videos",
         "consumes" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",
-          "name" : "videoIds",
-          "description" : "Batch of the video Ids",
+          "name" : "input",
+          "description" : "Input Data",
           "schema" : {
             "type" : "object",
             "properties" : {
               "recommended_ids" : {
                 "type" : "array",
+                "description" : "IDs of the videos recommended by the YouTube",
                 "items" : {
                   "type" : "string"
                 },
@@ -40,7 +41,7 @@
                     "type" : "string"
                   },
                   "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4" ],
-                  "description" : "The list of the videos that the system found distractful"
+                  "description" : "The list of the videos IDs which the system found distractful"
                 }
               },
               "required" : [ "distractful_ids" ]
@@ -59,7 +60,7 @@
     },
     "/api/feedback" : {
       "post" : {
-        "summary" : "Leave a feedback about the video regarding its distraction",
+        "summary" : "Reports feedback about the filtered videos accuracy",
         "consumes" : [ "application/json" ],
         "parameters" : [ {
           "in" : "body",

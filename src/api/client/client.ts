@@ -269,17 +269,17 @@ export class Api<
          * No description
          *
          * @name FilterDistractfulVideosCreate
-         * @summary Returns multiple decisions for the batch of the videos
+         * @summary Filters Distractful Videos
          * @request POST:/api/filterDistractfulVideos
          */
         filterDistractfulVideosCreate: (
-            videoIds: { recommended_ids: string[] },
+            input: { recommended_ids: string[] },
             params: RequestParams = {},
         ) =>
             this.request<{ distractful_ids: string[] }, string>({
                 path: `/api/filterDistractfulVideos`,
                 method: 'POST',
-                body: videoIds,
+                body: input,
                 type: ContentType.Json,
                 ...params,
             }),
@@ -288,7 +288,7 @@ export class Api<
          * No description
          *
          * @name FeedbackCreate
-         * @summary Leave a feedback about the video regarding its distraction
+         * @summary Reports feedback about the filtered videos accuracy
          * @request POST:/api/feedback
          */
         feedbackCreate: (
