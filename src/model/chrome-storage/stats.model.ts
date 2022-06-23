@@ -1,4 +1,4 @@
-export interface IFilterStats {
+export interface IFilterHistoryEntry {
     sessionId: string;
     utcDate: string;
     sourceVideoId: string;

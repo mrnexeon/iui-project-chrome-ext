@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import { chromeStorage } from '../../util/chrome-storage';
 
 /**
  * Extracts the recommended video IDs from the youtube DOM
@@ -19,7 +18,10 @@ const getIds = (): string[] => {
             .getAttribute('href')
             ?.split('?')[1]
             .split('=')[1];
-        if (!_.isUndefined(videoId)) {
+        if (
+            !_.isUndefined(videoId) &&
+            recommendation.style.display !== 'none'
+        ) {
             videoIds.push(videoId);
         }
     }
@@ -39,7 +41,6 @@ const hide = (ids: string[]): void => {
     ) as HTMLCollectionOf<HTMLElement>;
     const recommendations = Array.from(recommendationsCollection);
 
-    const hiddenVideoIds: string[] = [];
     for (const recommendation of recommendations) {
         // Extracts the video out of the href attribute
         const videoId = recommendation.children[0].children[0].children[0]
@@ -50,15 +51,13 @@ const hide = (ids: string[]): void => {
         if (
             _.isUndefined(videoId) ||
             ids.indexOf(videoId) === -1 ||
-            ids.indexOf(videoId) === -1
+            recommendation.style.display === 'none'
         ) {
             continue;
         }
 
-        hiddenVideoIds.push(videoId);
         recommendation.style.display = 'none';
     }
-    chromeStorage.filterStats.saveForCurrentVideo(hiddenVideoIds);
 };
 
 /**

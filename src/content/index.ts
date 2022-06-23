@@ -1,11 +1,10 @@
 import { youtubeDom } from '../service/youtube-dom';
 import { chromeStorage } from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
-import { getSessionGuid } from '../util/session.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
 
 const main = async () => {
-    if (!isYoutubeWatchPage()) {
+    if (!isYoutubeWatchPage) {
         return;
     }
 
@@ -27,15 +26,18 @@ const main = async () => {
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
         youtubeDom.recommendations.hide(recommendedIds);
+        chromeStorage.filterHistory.saveForCurrentVideo(recommendedIds);
     });
 };
 
 main();
-console.log(getSessionGuid());
-chromeStorage.filterStats.get().then(console.log);
+chromeStorage.filterHistory.get().then((r) => {
+    console.log(r);
+    chrome.storage.local.remove('filter-history');
+});
 
 chromeStorage.isFilterEnabled.onChange(() => {
-    if (!isYoutubeWatchPage()) {
+    if (!isYoutubeWatchPage) {
         return;
     }
 
@@ -47,6 +49,7 @@ chromeStorage.isFilterEnabled.onChange(() => {
         window.location.pathname,
         '?',
         searchParams.toString(),
+        's',
     ].join('');
     window.location.replace(url);
 });

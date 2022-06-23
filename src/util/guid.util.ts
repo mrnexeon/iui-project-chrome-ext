@@ -11,7 +11,7 @@ const decimalToHex = (number: number) => {
     return hex;
 };
 
-export const guid = () => {
+export const guid = (): string => {
     // RFC4122: The version 4 UUID is meant for generating UUIDs from truly-random or
     // pseudo-random numbers.
     // The algorithm is as follows:
@@ -36,7 +36,9 @@ export const guid = () => {
     if (cryptoObj && cryptoObj.getRandomValues) {
         const buffer = new Uint8Array(16);
         cryptoObj.getRandomValues(buffer);
-        //buffer[6] and buffer[7] represents the time_hi_and_version field. We will set the four most significant bits (4 through 7) of buffer[6] to represent decimal number 4 (UUID version number).
+        // buffer[6] and buffer[7] represents the time_hi_and_version field.
+        // We will set the four most significant bits (4 through 7) of buffer[6]
+        // to represent decimal number 4 (UUID version number).
         buffer[6] |= 0x40; //buffer[6] | 01000000 will set the 6 bit to 1.
         buffer[6] &= 0x4f; //buffer[6] & 01001111 will set the 4, 5, and 7 bit to 0 such that bits 4-7 == 0100 = "4".
         //buffer[8] represents the clock_seq_hi_and_reserved field. We will set the two most significant bits (6 and 7) of the clock_seq_hi_and_reserved to zero and one, respectively.

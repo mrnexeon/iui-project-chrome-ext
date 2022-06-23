@@ -1,7 +1,6 @@
 import { guid } from './guid.util';
 
-const sessionGuid = guid();
-
-export const getSessionGuid = (): string => {
-    return sessionGuid;
-};
+/**
+ * SessionId which is (pseudo) unique for each lifetime of this module
+ */
+export const sessionId = guid();
