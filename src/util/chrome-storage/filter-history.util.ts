@@ -1,5 +1,8 @@
 import _ from 'lodash';
-import { IFilterHistoryEntry } from '../../model/chrome-storage/stats.model';
+import {
+    IFilterHistoryEntry,
+    IFilterHistoryEntryVideo,
+} from '../../model/chrome-storage/stats.model';
 import { Mutex } from '../mutex.util';
 import { sessionId } from '../session.util';
 import { isYoutubeWatchPage } from '../url-check.util';
@@ -49,10 +52,12 @@ export const filterHistory = {
      * video that is currently playing
      * NOTE: A new Entry is created after each reload, navigate etc.
      *
-     * @param hiddenVideosIds
+     * @param hiddenVideos
      */
-    saveForCurrentVideo: async (hiddenVideosIds: string[]): Promise<void> => {
-        if (hiddenVideosIds.length === 0 || !isYoutubeWatchPage) {
+    saveForCurrentVideo: async (
+        hiddenVideos: IFilterHistoryEntryVideo[],
+    ): Promise<void> => {
+        if (hiddenVideos.length === 0 || !isYoutubeWatchPage) {
             return;
         }
 
@@ -80,7 +85,7 @@ export const filterHistory = {
                   filteredVideos: [],
               }
             : currentHistoryEntry;
-        newHistoryEntry.filteredVideos.push(...hiddenVideosIds);
+        newHistoryEntry.filteredVideos.push(...hiddenVideos);
 
         await filterHistory.save(newHistoryEntry);
 

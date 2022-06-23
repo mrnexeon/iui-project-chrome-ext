@@ -11,6 +11,7 @@
     "action": {
         "default_popup": "pages/popup/index.html"
     },
+    "options_page": "pages/options/index.html",
     "name": "youlearn",
     "manifest_version": 3,
     "minimum_chrome_version": "93",

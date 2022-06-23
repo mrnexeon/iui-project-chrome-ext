@@ -4,11 +4,11 @@ import {
     FormControlLabel,
     Switch,
     ThemeProvider,
-    Typography
+    Typography,
 } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
-import { chromeStorage } from '../../util/chrome-storage.util';
+import { chromeStorage } from '../../util/chrome-storage';
 
 const App = (): JSX.Element => {
     const theme = usePreferredTheme();

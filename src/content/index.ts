@@ -16,6 +16,7 @@ const main = async () => {
     const videoListParent = await youtubeDom.recommendations.getParentElement();
     observeDOM(videoListParent as HTMLElement, () => {
         const recommendedIds = youtubeDom.recommendations.getIds();
+        const recommendedVideos = youtubeDom.recommendations.getVideos();
 
         // TODO
         // API Logic goes HERE
@@ -26,13 +27,18 @@ const main = async () => {
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
         youtubeDom.recommendations.hide(recommendedIds);
-        chromeStorage.filterHistory.saveForCurrentVideo(recommendedIds);
+
+        const filteredVideos = recommendedVideos.filter(
+            (v) => recommendedIds.indexOf(v.id) > -1,
+        );
+        chromeStorage.filterHistory.saveForCurrentVideo(filteredVideos);
     });
 };
 
 main();
 chromeStorage.filterHistory.get().then((r) => {
     console.log(r);
+    console.log(JSON.stringify(r).length);
     chrome.storage.local.remove('filter-history');
 });
 
