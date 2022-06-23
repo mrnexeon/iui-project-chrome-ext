@@ -10,6 +10,8 @@ import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import { chromeStorage } from '../../util/chrome-storage.util';
 
+import { filterDistractfulVideos } from '../../api/client';
+
 const App = (): JSX.Element => {
     const theme = usePreferredTheme();
 
@@ -41,6 +43,7 @@ const App = (): JSX.Element => {
                     }
                     label="Filter Recommendations"
                 />
+                <p><button onClick={() => filterDistractfulVideos(["YBN4xI3Z-lc", "gx8_iBO6Sig", "K-MFoZNtt2s", "OmaFy0NKTss"]).then(res => console.log(res)).catch(err => console.error(err))}>Filter Videos</button></p>
             </Box>
         </ThemeProvider>
     );
