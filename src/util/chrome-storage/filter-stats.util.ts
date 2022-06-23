@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { IFilterStats } from '../../model/chrome-storage/stats.model';
+import { getSessionGuid } from '../session.util';
 
 const storageKeys = {
     filterStats: 'filter-stats',
@@ -7,7 +8,12 @@ const storageKeys = {
 
 export const filterStats = {
     save: async (stat: IFilterStats): Promise<void> => {
-        const currentStats = await filterStats.get();
+        console.log('Save', stat);
+        const currentStats = (await filterStats.get()).filter(
+            (s) =>
+                s.sessionId !== stat.sessionId &&
+                s.sourceVideoId !== stat.sourceVideoId,
+        );
         currentStats.push(stat);
 
         const data: { [key: string]: IFilterStats[] } = {};
@@ -27,9 +33,30 @@ export const filterStats = {
 
     saveForCurrentVideo: async (hiddenVideos: string[]): Promise<void> => {
         const searchParams = new URLSearchParams(window.location.search);
-        const v = searchParams.get('v');
+        const v = searchParams.get('v') ?? '';
 
-        const stats: IFilterStats = {};
+        const sessionId = getSessionGuid();
+        const currentStats = await filterStats.get();
+        const currentStat = currentStats.filter(
+            (s) => s.sessionId === sessionId && s.sourceVideoId === v,
+        )[0];
+
+        const newStats: IFilterStats = _.isUndefined(currentStat)
+            ? {
+                  sessionId: sessionId,
+                  utcDate: new Date().toUTCString(),
+                  sourceVideoId: v,
+                  filteredVideos: hiddenVideos,
+              }
+            : {
+                  ...currentStat,
+                  filteredVideos: [
+                      ...currentStat.filteredVideos,
+                      ...hiddenVideos,
+                  ],
+              };
+
+        filterStats.save(newStats);
 
         /* 
 			TODO

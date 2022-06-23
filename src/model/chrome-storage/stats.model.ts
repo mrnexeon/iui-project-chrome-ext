@@ -1,7 +1,6 @@
 export interface IFilterStats {
+    sessionId: string;
+    utcDate: string;
     sourceVideoId: string;
-    filterData: {
-        wasFiltered: boolean;
-        videoId: string;
-    };
+    filteredVideos: string[];
 }

@@ -1,6 +1,7 @@
 import { youtubeDom } from '../service/youtube-dom';
-import { chromeStorage } from '../util/chrome-storage.util';
+import { chromeStorage } from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
+import { getSessionGuid } from '../util/session.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
 
 const main = async () => {
@@ -30,6 +31,8 @@ const main = async () => {
 };
 
 main();
+console.log(getSessionGuid());
+chromeStorage.filterStats.get().then(console.log);
 
 chromeStorage.isFilterEnabled.onChange(() => {
     if (!isYoutubeWatchPage()) {
@@ -44,6 +47,6 @@ chromeStorage.isFilterEnabled.onChange(() => {
         window.location.pathname,
         '?',
         searchParams.toString(),
-    ].join();
+    ].join('');
     window.location.replace(url);
 });
