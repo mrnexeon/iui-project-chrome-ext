@@ -44,6 +44,6 @@ chromeStorage.isFilterEnabled.onChange(() => {
         window.location.pathname,
         '?',
         searchParams.toString(),
-    ].join();
+    ].join('');
     window.location.replace(url);
 });
