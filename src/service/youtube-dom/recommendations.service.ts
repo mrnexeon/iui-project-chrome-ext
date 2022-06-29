@@ -12,9 +12,15 @@ const getIds = (): string[] => {
     const recommendations = Array.from(recommendationsCollection);
 
     const videoIds: string[] = [];
-    for (const recommendation of recommendations) {
+    for (const recommendation of recommendations) { 
+        const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
+
+        if (!yt_simple_endpoint) {
+            continue;
+        }
+
         // Extracts the video out of the href attribute
-        const videoId = recommendation.children[0].children[0].children[0]
+        const videoId = yt_simple_endpoint
             .getAttribute('href')
             ?.split('?')[1]
             .split('=')[1];
@@ -39,6 +45,10 @@ const hide = (ids: string[]): void => {
     const recommendations = Array.from(recommendationsCollection);
 
     for (const recommendation of recommendations) {
+        //console.log(recommendation)
+        const feedback_button_html = '<div style="width: 30px;height: 30px;background: black;position: absolute;left: 4px;top: 4px;z-index: 100;"></div>'
+        recommendation.innerHTML = feedback_button_html + recommendation.innerHTML;
+
         // Extracts the video out of the href attribute
         const videoId = recommendation.children[0].children[0].children[0]
             .getAttribute('href')
@@ -53,7 +63,7 @@ const hide = (ids: string[]): void => {
             continue;
         }
 
-        recommendation.style.display = 'none';
+        //recommendation.style.display = 'none';
     }
 };
 
