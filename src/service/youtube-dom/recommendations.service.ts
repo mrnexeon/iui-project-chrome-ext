@@ -48,19 +48,19 @@ const getVideos = (): IFilterHistoryEntryVideo[] => {
 
         const title =
             recommendation.children[0].children[1].children[0].children[0]
-                .children[0].children[1].innerHTML;
+                .children[0].children[1].textContent;
 
         const channelName =
             recommendation.children[0].children[1].children[0].children[0]
                 .children[1].children[0].children[0].children[0].children[0]
-                .children[0].children[0].children[0].innerHTML;
+                .children[0].children[0].children[0].textContent;
 
         if (!_.isUndefined(id) && recommendation.style.display !== 'none')
             videos.push({
                 id: id,
                 // Leading and trailing whitespace has to be replaced
-                title: title.replace(/(^\s*|\s*$)/gm, ''),
-                channelName: channelName.replace(/(^\s*|\s*$)/gm, ''),
+                title: (title ?? '').replace(/(^\s*|\s*$)/gm, ''),
+                channelName: (channelName ?? '').replace(/(^\s*|\s*$)/gm, ''),
             });
     }
 

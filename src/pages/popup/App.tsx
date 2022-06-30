@@ -1,14 +1,14 @@
 import {
     Box,
-    CssBaseline,
+    Button,
     FormControlLabel,
     Switch,
-    ThemeProvider,
     Typography,
 } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import { chromeStorage } from '../../util/chrome-storage';
+import { TopBar } from './components/top-bar.component';
 
 const App = (): JSX.Element => {
     const theme = usePreferredTheme();
@@ -21,8 +21,8 @@ const App = (): JSX.Element => {
     }, []);
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
+        <>
+            <TopBar />
             <Box
                 sx={{
                     minWidth: '300px',
@@ -42,7 +42,21 @@ const App = (): JSX.Element => {
                     label="Filter Recommendations"
                 />
             </Box>
-        </ThemeProvider>
+            <Button
+                onClick={() => {
+                    chrome.runtime.openOptionsPage();
+                }}
+            >
+                Options
+            </Button>
+            <Button
+                onClick={() => {
+                    chrome.storage.local.remove('filter-history');
+                }}
+            >
+                Clear History
+            </Button>
+        </>
     );
 };
 

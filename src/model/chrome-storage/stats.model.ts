@@ -1,7 +1,7 @@
 export interface IFilterHistoryEntry {
     sessionId: string;
     utcDate: string;
-    sourceVideoId: string;
+    sourceVideo: IFilterHistoryEntryVideo;
     filteredVideos: IFilterHistoryEntryVideo[];
 }
 

@@ -14,9 +14,11 @@ const main = async () => {
     }
 
     const videoListParent = await youtubeDom.recommendations.getParentElement();
-    observeDOM(videoListParent as HTMLElement, () => {
-        const recommendedIds = youtubeDom.recommendations.getIds();
+    observeDOM(videoListParent as HTMLElement, async () => {
         const recommendedVideos = youtubeDom.recommendations.getVideos();
+        const videosToFilter = recommendedVideos.filter(
+            (v) => v.id.length > v.id.replace(/(a|b|1|2)/gm, '').length,
+        );
 
         // TODO
         // API Logic goes HERE
@@ -26,12 +28,9 @@ const main = async () => {
         // filterDistractfulVideos(['test1', 'test2']).then(distractful_ids => console.log(distractful_ids)).catch(err => console.error(err))
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
-        youtubeDom.recommendations.hide(recommendedIds);
+        youtubeDom.recommendations.hide(videosToFilter.map((v) => v.id));
 
-        const filteredVideos = recommendedVideos.filter(
-            (v) => recommendedIds.indexOf(v.id) > -1,
-        );
-        chromeStorage.filterHistory.saveForCurrentVideo(filteredVideos);
+        chromeStorage.filterHistory.saveForCurrentVideo(videosToFilter);
     });
 };
 
@@ -39,7 +38,6 @@ main();
 chromeStorage.filterHistory.get().then((r) => {
     console.log(r);
     console.log(JSON.stringify(r).length);
-    chrome.storage.local.remove('filter-history');
 });
 
 chromeStorage.isFilterEnabled.onChange(() => {
