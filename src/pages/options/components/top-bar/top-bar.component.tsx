@@ -10,6 +10,7 @@ import * as React from 'react';
 
 interface IProps {
     pageTitle?: string;
+    onSearch?: (str: string) => void;
 }
 
 const Search = styled('div')(({ theme }) => ({
@@ -88,7 +89,13 @@ export const TopBar: React.FunctionComponent<IProps> = (
                         </SearchIconWrapper>
                         <StyledInputBase
                             placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
+                            onChange={_.debounce(
+                                (e) =>
+                                    _.isUndefined(props.onSearch)
+                                        ? void 0
+                                        : props.onSearch(e.target.value),
+                                250,
+                            )}
                         />
                     </Search>
                 </Toolbar>

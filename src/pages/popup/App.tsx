@@ -1,10 +1,4 @@
-import {
-    Box,
-    Button,
-    FormControlLabel,
-    Switch,
-    Typography,
-} from '@mui/material';
+import { Box, Button, FormControlLabel, Switch } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import { chromeStorage } from '../../util/chrome-storage';
@@ -31,7 +25,6 @@ const App = (): JSX.Element => {
                 }}
                 textAlign="center"
             >
-                <Typography variant="h4">YouLearn</Typography>
                 <FormControlLabel
                     control={
                         <Switch
@@ -42,13 +35,6 @@ const App = (): JSX.Element => {
                     label="Filter Recommendations"
                 />
             </Box>
-            <Button
-                onClick={() => {
-                    chrome.runtime.openOptionsPage();
-                }}
-            >
-                Options
-            </Button>
             <Button
                 onClick={() => {
                     chrome.storage.local.remove('filter-history');

@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import * as React from 'react';
 
 /**
@@ -15,6 +15,13 @@ export const TopBar: React.FunctionComponent = (): JSX.Element => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     YouLearn
                 </Typography>
+                <Button
+                    onClick={() => {
+                        chrome.runtime.openOptionsPage();
+                    }}
+                >
+                    Options
+                </Button>
             </Toolbar>
         </AppBar>
     );
