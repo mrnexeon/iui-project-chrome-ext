@@ -13,8 +13,19 @@ const main = async () => {
         return;
     }
 
-    const videoListParent = await youtubeDom.recommendations.getParentElement();
-    observeDOM(videoListParent as HTMLElement, () => {
+    const videoListParent = (await youtubeDom.recommendations.getParentElement())
+
+        .querySelector('#items'); // <- Hotfix. Description goes below.
+        
+        /*
+            Hot fix: the element #items contains list of divs where each div is a recommended video. 
+            Thus, we do observe changes on depth level 1, not 2. As a result, we can set option 
+            subtree of MutationObserver to false and therefore add feedback buttons without triggering
+            the observer.
+        */
+
+    console.log(videoListParent)
+    observeDOM(videoListParent as HTMLElement, (mutations) => {
         const recommendedIds = youtubeDom.recommendations.getIds();
 
         // TODO

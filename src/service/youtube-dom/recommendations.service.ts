@@ -12,7 +12,7 @@ const getIds = (): string[] => {
     const recommendations = Array.from(recommendationsCollection);
 
     const videoIds: string[] = [];
-    for (const recommendation of recommendations) { 
+    for (const recommendation of recommendations) {
         const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
 
         if (!yt_simple_endpoint) {
@@ -33,6 +33,26 @@ const getIds = (): string[] => {
 };
 
 /**
+ * Places a feedback button into recommended video block
+ * @param element HTML element of the block
+ */
+const appendFeedbackButton = (element: HTMLElement): void => {
+    let oldBtn = element.querySelector('.youlearn-feedback-button')
+    oldBtn?.remove();
+    let feedback_button = document.createElement('button');
+    feedback_button.className = 'youlearn-feedback-button';
+    feedback_button.style.width = '30px';
+    feedback_button.style.height = '30px';
+    feedback_button.style.background = 'red';
+    feedback_button.style.position = 'absolute';
+    feedback_button.style.zIndex = '100';
+    feedback_button.style.left = '4px';
+    feedback_button.style.top = '4px';
+    feedback_button.onclick = () => alert('Thank you for your feedback!');
+    element.appendChild(feedback_button);
+}
+
+/**
  * Gives all recommendations with their id present in ids the css property
  * display: none
  *
@@ -45,12 +65,17 @@ const hide = (ids: string[]): void => {
     const recommendations = Array.from(recommendationsCollection);
 
     for (const recommendation of recommendations) {
-        //console.log(recommendation)
-        const feedback_button_html = '<div style="width: 30px;height: 30px;background: black;position: absolute;left: 4px;top: 4px;z-index: 100;"></div>'
-        recommendation.innerHTML = feedback_button_html + recommendation.innerHTML;
+        ////console.log(recommendation)
 
         // Extracts the video out of the href attribute
-        const videoId = recommendation.children[0].children[0].children[0]
+        const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
+
+        if (!yt_simple_endpoint) {
+            continue;
+        }
+
+        // Extracts the video out of the href attribute
+        const videoId = yt_simple_endpoint
             .getAttribute('href')
             ?.split('?')[1]
             .split('=')[1];
@@ -63,7 +88,12 @@ const hide = (ids: string[]): void => {
             continue;
         }
 
-        //recommendation.style.display = 'none';
+        if (/^\d+$/.test(videoId[0])) { // Randomizer: It skips videos which ids starts on the digit.
+            appendFeedbackButton(recommendation);
+            continue;
+        }
+
+        recommendation.style.display = 'none';
     }
 };
 

@@ -10,7 +10,7 @@ const MutationObserver = window.MutationObserver;
  */
 export const observeDOM = (
     observedNode: HTMLElement,
-    callback: () => void,
+    callback: (mutations: MutationRecord[]) => void,
 ): MutationObserver | null => {
     if (!observedNode || observedNode.nodeType !== 1) return null;
 
@@ -19,15 +19,15 @@ export const observeDOM = (
 
         mutationObserver.observe(observedNode, {
             childList: true,
-            subtree: true,
+            subtree: false,
         });
 
         return mutationObserver;
     }
 
     // Fallback for old browsers
-    observedNode.addEventListener('DOMNodeInserted', callback, false);
-    observedNode.addEventListener('DOMNodeRemoved', callback, false);
+    //observedNode.addEventListener('DOMNodeInserted', callback, false);
+    //observedNode.addEventListener('DOMNodeRemoved', callback, false);
 
     return null;
 };
