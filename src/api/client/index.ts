@@ -1,6 +1,6 @@
 import { Api } from './client';
 
-const client = new Api();
+const client = new Api({baseUrl: 'http://youlearn.thiers.ch'});
 
 /**
  * Reports a feedback about the filtered video to REST API server
