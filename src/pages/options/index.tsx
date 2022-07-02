@@ -5,8 +5,6 @@ import { render } from 'react-dom';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import App from './App';
 
-console.log('popup script');
-
 const root = document.querySelector('#root');
 
 const Index: React.FunctionComponent = (): JSX.Element => {

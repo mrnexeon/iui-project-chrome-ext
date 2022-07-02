@@ -5,7 +5,7 @@ const storageKeys = {
     isFilterEnabled: 'is-filter-enabled',
 };
 
-const isFilterEnabled = {
+export const isFilterEnabled = {
     /**
      * Persist isFilterEnabled to chrome's local storage
      *
@@ -67,11 +67,7 @@ const isFilterEnabled = {
         };
 
         chrome.storage.local.onChanged.addListener(
-            internalCallback.bind(chromeStorage.isFilterEnabled),
+            internalCallback.bind(isFilterEnabled),
         );
     },
-};
-
-export const chromeStorage = {
-    isFilterEnabled: isFilterEnabled,
 };
