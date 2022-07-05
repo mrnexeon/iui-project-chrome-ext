@@ -16,16 +16,16 @@ const main = async () => {
     const videoListParent = (await youtubeDom.recommendations.getParentElement())
 
         .querySelector('#items'); // <- Hotfix. Description goes below.
-        
-        /*
-            Hot fix: the element #items contains list of divs where each div is a recommended video. 
-            Thus, we do observe changes on depth level 1, not 2. As a result, we can set option 
-            subtree of MutationObserver to false and therefore add feedback buttons without triggering
-            the observer.
-        */
+
+    /*
+        Hot fix: the element #items contains list of divs where each div is a recommended video. 
+        Thus, we do observe changes on depth level 1, not 2. As a result, we can set option 
+        subtree of MutationObserver to false and therefore add feedback buttons without triggering
+        the observer.
+    */
 
     console.log(videoListParent)
-    observeDOM(videoListParent as HTMLElement, (mutations) => {
+    observeDOM(videoListParent as HTMLElement, async (mutations) => {
         const recommendedIds = youtubeDom.recommendations.getIds();
 
         // TODO
@@ -36,7 +36,46 @@ const main = async () => {
         // filterDistractfulVideos(['test1', 'test2']).then(distractful_ids => console.log(distractful_ids)).catch(err => console.error(err))
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
-        youtubeDom.recommendations.hide(recommendedIds);
+        let distractfulVideoIds = [], passedVideoIds = [];
+
+        console.log({ ...youtubeDom.cache })
+
+        for (const id of recommendedIds) {
+
+            // Querying an id from the cache of videos that have been hidden before
+            if (youtubeDom.cache.hiddenIds.has(id)) {
+                distractfulVideoIds.push(id)
+                continue;
+            }
+
+            //try {
+            //    const distractful_ids = await filterDistractfulVideos([id])
+            //    
+            //    if (distractful_ids.includes(id)) {
+            //        distractfulVideoIds.push(id)
+            //        continue;
+            //    }
+            //}
+            //catch(e) {
+            //    console.error(e)
+            //}
+
+            if (!(/^\d+$/.test(id))) { // Randomizer: It skips videos which ids starts on the digit.
+                distractfulVideoIds.push(id)
+                continue;
+            }
+            
+            passedVideoIds.push(id)
+        }
+
+        // Cache hidden videos in order to reduce REST API calls with duplicated ids
+        distractfulVideoIds.forEach(id => youtubeDom.cache.hiddenIds.add(id));
+
+        console.log({ ...youtubeDom.cache, distractfulVideoIds, passedVideoIds });
+
+        youtubeDom.recommendations.hide(distractfulVideoIds);
+
+        youtubeDom.recommendations.appendFeedbackButtons(passedVideoIds);
     });
 };
 
