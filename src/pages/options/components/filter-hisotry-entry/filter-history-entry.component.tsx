@@ -28,7 +28,7 @@ export const FilterHistoryEntry: React.FunctionComponent = (): JSX.Element => {
     const onMarkDistractingClick = async (id: string) => {
         // TODO put feedback API calls here
 
-        const response = await reportFeedback(id, true);
+        const response = await reportFeedback(id, false);
 
         console.debug('Feedback has been sent!', {id, response})
     };
