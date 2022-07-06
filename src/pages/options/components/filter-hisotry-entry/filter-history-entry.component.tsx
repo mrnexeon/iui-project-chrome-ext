@@ -4,6 +4,7 @@ import { Box } from '@mui/system';
 import _ from 'lodash';
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { reportFeedback } from '../../../../api/client';
 import { chromeStorage } from '../../../../util/chrome-storage';
 import { FilterHistoryEntryVideo } from './filter-history-entry-video.component';
 
@@ -27,8 +28,9 @@ export const FilterHistoryEntry: React.FunctionComponent = (): JSX.Element => {
     const onMarkDistractingClick = async (id: string) => {
         // TODO put feedback API calls here
 
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        alert(id);
+        const response = await reportFeedback(id, true);
+
+        console.debug('Feedback has been sent!', {id, response})
     };
 
     return (
