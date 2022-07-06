@@ -1,3 +1,4 @@
+import { filterDistractfulVideos } from '../api/client';
 import { youtubeDom } from '../service/youtube-dom';
 import { chromeStorage } from '../util/chrome-storage.util';
 import { observeDOM } from '../util/mutation-observer.util';
@@ -36,10 +37,26 @@ const main = async () => {
         // filterDistractfulVideos(['test1', 'test2']).then(distractful_ids => console.log(distractful_ids)).catch(err => console.error(err))
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
-        let distractfulVideoIds = [], passedVideoIds = [];
+        let unresolvedVideoIds = [], distractfulVideoIds = []//, passedVideoIds = [];
 
         console.log({ ...youtubeDom.cache })
 
+        for (const id of recommendedIds) {
+
+            // Querying an id from the cache of videos that have been hidden before
+            if (youtubeDom.cache.hiddenIds.has(id)) {
+                distractfulVideoIds.push(id);
+            } else {
+                unresolvedVideoIds.push(id);
+            }
+        }
+
+        const distractful_ids = await filterDistractfulVideos(unresolvedVideoIds);
+        console.log({ distractful_ids });
+
+        distractfulVideoIds.push(...distractful_ids)
+
+        /*
         for (const id of recommendedIds) {
 
             // Querying an id from the cache of videos that have been hidden before
@@ -48,17 +65,19 @@ const main = async () => {
                 continue;
             }
 
-            //try {
-            //    const distractful_ids = await filterDistractfulVideos([id])
-            //    
-            //    if (distractful_ids.includes(id)) {
-            //        distractfulVideoIds.push(id)
-            //        continue;
-            //    }
-            //}
-            //catch(e) {
-            //    console.error(e)
-            //}
+            try {
+                const distractful_ids = await filterDistractfulVideos([id])
+
+                console.log({distractful_ids});
+
+                if (distractful_ids.includes(id)) {
+                    distractfulVideoIds.push(id)
+                    continue;
+                }
+            }
+            catch(e) {
+                console.error(e)
+            }
 
             if (!(/^\d+$/.test(id))) { // Randomizer: It skips videos which ids starts on the digit.
                 distractfulVideoIds.push(id)
@@ -67,15 +86,16 @@ const main = async () => {
             
             passedVideoIds.push(id)
         }
+        */
 
         // Cache hidden videos in order to reduce REST API calls with duplicated ids
         distractfulVideoIds.forEach(id => youtubeDom.cache.hiddenIds.add(id));
 
-        console.log({ ...youtubeDom.cache, distractfulVideoIds, passedVideoIds });
+        console.log({ ...youtubeDom.cache, distractfulVideoIds });
 
         youtubeDom.recommendations.hide(distractfulVideoIds);
 
-        youtubeDom.recommendations.appendFeedbackButtons(passedVideoIds);
+        //youtubeDom.recommendations.appendFeedbackButtons(passedVideoIds);
     });
 };
 
