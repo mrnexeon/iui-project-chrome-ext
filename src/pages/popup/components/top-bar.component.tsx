@@ -16,6 +16,7 @@ export const TopBar: React.FunctionComponent = (): JSX.Element => {
                     YouLearn
                 </Typography>
                 <Button
+                    color="inherit"
                     onClick={() => {
                         chrome.runtime.openOptionsPage();
                     }}
