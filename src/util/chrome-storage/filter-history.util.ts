@@ -7,6 +7,7 @@ import {
 import { youtubeDom } from '../../service/youtube-dom';
 import { Mutex } from '../mutex.util';
 import { sessionId } from '../session.util';
+import { stringUtil } from '../string.utilt';
 import { isYoutubeWatchPage } from '../url-check.util';
 
 const storageKeys = {
@@ -43,7 +44,12 @@ const get = async (): Promise<IFilterHistoryEntry[]> => {
     const storageObj = await chrome.storage.local.get(storageKeys.filterStats);
     const filterHistory = storageObj[storageKeys.filterStats];
 
-    return _.isUndefined(filterHistory) ? [] : filterHistory;
+    return _.isUndefined(filterHistory)
+        ? []
+        : filterHistory.sort(
+              (e1: IFilterHistoryEntry, e2: IFilterHistoryEntry) =>
+                  stringUtil.compareIgnoreDiacritics(e2.utcDate, e1.utcDate),
+          );
 };
 
 /**
