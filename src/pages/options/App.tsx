@@ -7,8 +7,6 @@ import { FilterHistory } from './components/filter-history/filter-history.compon
 import { TopBar } from './components/top-bar/top-bar.component';
 
 const App: React.FunctionComponent = (): JSX.Element => {
-    const [searchStr, setSearchStr] = React.useState('');
-
     React.useEffect(() => {
         // As we have nothing besides than the history:
         if (window.location.hash.indexOf('history') === -1) {
@@ -25,18 +23,13 @@ const App: React.FunctionComponent = (): JSX.Element => {
             }}
         >
             <Box flex={0}>
-                <TopBar onSearch={setSearchStr} />
+                <TopBar />
             </Box>
             <Box flex={1} overflow="scroll">
                 <Box sx={{ maxWidth: '800px', margin: 'auto' }}>
                     <HashRouter>
                         <Routes>
-                            <Route
-                                path="history"
-                                element={
-                                    <FilterHistory searchStr={searchStr} />
-                                }
-                            />
+                            <Route path="history" element={<FilterHistory />} />
                             <Route
                                 path="history/:id"
                                 element={<FilterHistoryEntry />}

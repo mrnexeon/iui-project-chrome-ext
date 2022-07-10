@@ -1,4 +1,4 @@
-import { Box, Button, FormControlLabel, Switch } from '@mui/material';
+import { Box, FormControlLabel, Switch } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import { chromeStorage } from '../../util/chrome-storage';
@@ -35,13 +35,6 @@ const App = (): JSX.Element => {
                     label="Filter Recommendations"
                 />
             </Box>
-            <Button
-                onClick={() => {
-                    chrome.storage.local.remove('filter-history');
-                }}
-            >
-                Clear History
-            </Button>
         </>
     );
 };

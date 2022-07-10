@@ -3,42 +3,43 @@ import { Box } from '@mui/system';
 import _ from 'lodash';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IFilterHistoryEntry } from '../../../../model/chrome-storage/stats.model';
 import { chromeStorage } from '../../../../util/chrome-storage';
-import { stringUtil } from '../../../../util/string.utilt';
 import { FilterHistoryVideo } from './filter-history-video.component';
-
-interface IProps {
-    searchStr?: string;
-}
 
 /**
  * List of FilterHistoryEntries
  *
  * @returns FilterHistory Component
  */
-export const FilterHistory: React.FunctionComponent<IProps> = (
-    props: IProps,
-): JSX.Element => {
+export const FilterHistory: React.FunctionComponent = (): JSX.Element => {
     // Routing related
     const navigate = useNavigate();
 
     const filterHistory = chromeStorage.filterHistory.useValue();
-    const filteredFilterHistory = React.useMemo(() => {
-        // Filter filterHistory by search query
-        const str = props.searchStr;
-        if (_.isUndefined(str) || str === '') {
-            return filterHistory;
+
+    const groupedFilterHistory: [
+        IFilterHistoryEntry,
+        ...IFilterHistoryEntry[],
+    ][] = React.useMemo(() => {
+        const grouped: [IFilterHistoryEntry, ...IFilterHistoryEntry[]][] = [];
+
+        for (const entry of filterHistory) {
+            const last = grouped[grouped.length - 1];
+            if (
+                !_.isUndefined(last) &&
+                last.length > 0 &&
+                last[0].sourceVideo.id === entry.sourceVideo.id
+            ) {
+                last.push(entry);
+                continue;
+            }
+
+            grouped.push([entry]);
         }
-        return filterHistory.filter(
-            (e) =>
-                stringUtil
-                    .normalize(e.sourceVideo.title)
-                    .indexOf(stringUtil.normalize(str)) > -1 ||
-                stringUtil
-                    .normalize(e.sourceVideo.channelName)
-                    .indexOf(stringUtil.normalize(str)) > -1,
-        );
-    }, [props.searchStr, filterHistory]);
+
+        return grouped;
+    }, [filterHistory]);
 
     return (
         <Stack
@@ -53,7 +54,7 @@ export const FilterHistory: React.FunctionComponent<IProps> = (
                     While filtering was enabled
                 </Typography>
             </Box>
-            {filteredFilterHistory.length === 0 && (
+            {groupedFilterHistory.length === 0 && (
                 <Typography
                     variant="subtitle1"
                     color="text.secondary"
@@ -63,11 +64,11 @@ export const FilterHistory: React.FunctionComponent<IProps> = (
                     Nothing to see here
                 </Typography>
             )}
-            {filteredFilterHistory.map((entry, index) => (
+            {groupedFilterHistory.map((entries, index) => (
                 <FilterHistoryVideo
                     key={`filter-history-entry-${index}`}
-                    entry={entry}
-                    onClick={() => navigate(entry.sessionId)}
+                    entries={entries}
+                    onClick={navigate}
                 />
             ))}
         </Stack>
