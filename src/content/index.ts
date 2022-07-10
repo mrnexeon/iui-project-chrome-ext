@@ -1,3 +1,4 @@
+import { TopBanner } from '../components/top-banner.component';
 import { youtubeDom } from '../service/youtube-dom';
 import { chromeStorage } from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
@@ -12,6 +13,8 @@ const main = async () => {
     if (!isFilterEnabled) {
         return;
     }
+
+    youtubeDom.ui.renderAboveNav(TopBanner);
 
     const videoListParent = await youtubeDom.recommendations.getParentElement();
     observeDOM(videoListParent as HTMLElement, async () => {
