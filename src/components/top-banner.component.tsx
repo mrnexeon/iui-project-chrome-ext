@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { CssBaseline, Link, Paper, Typography } from '@mui/material';
+import { Link, Paper, Typography } from '@mui/material';
 import * as React from 'react';
 import { usePreferredTheme } from '../hooks/theme.hook';
 import { chromeStorage } from '../util/chrome-storage';
@@ -20,7 +20,6 @@ export const TopBanner: React.FunctionComponent = (): JSX.Element => {
 
     return (
         <ThemeProvider theme={theme}>
-            <CssBaseline />
             <Paper
                 sx={{
                     position: 'fixed',
@@ -29,8 +28,7 @@ export const TopBanner: React.FunctionComponent = (): JSX.Element => {
                     width: '100vw',
                     height: '30px',
                     display: 'flex',
-                    alignItems: 'end',
-                    paddingBottom: '3px',
+                    alignItems: 'center',
                     borderRadius: 0,
                 }}
                 elevation={1}
