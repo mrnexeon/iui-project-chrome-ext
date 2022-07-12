@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { IFilterHistoryEntryVideo } from '../../model/chrome-storage/stats.model';
 
 /**
  * Extracts the recommended video IDs from the youtube DOM
@@ -11,7 +12,7 @@ const getIds = (): string[] => {
     ) as HTMLCollectionOf<HTMLElement>;
     const recommendations = Array.from(recommendationsCollection);
 
-    const videoIds: string[] = [];
+    const ids: string[] = [];
     for (const recommendation of recommendations) {
         const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
 
@@ -20,16 +21,55 @@ const getIds = (): string[] => {
         }
 
         // Extracts the video out of the href attribute
-        const videoId = yt_simple_endpoint
+        const id = recommendation.children[0].children[0].children[0]
             .getAttribute('href')
             ?.split('?')[1]
             .split('=')[1];
-        if (!_.isUndefined(videoId)) {
-            videoIds.push(videoId);
+        if (!_.isUndefined(id) && recommendation.style.display !== 'none') {
+            ids.push(id);
         }
     }
 
-    return videoIds;
+    return ids;
+};
+
+/**
+ * Extracts the recommended videos
+ *
+ * @returns list of videos with ids, titles and channel names
+ */
+const getVideos = (): IFilterHistoryEntryVideo[] => {
+    const recommendationsCollection = document.getElementsByTagName(
+        'ytd-compact-video-renderer',
+    ) as HTMLCollectionOf<HTMLElement>;
+    const recommendations = Array.from(recommendationsCollection);
+
+    const videos: IFilterHistoryEntryVideo[] = [];
+    for (const recommendation of recommendations) {
+        const id = recommendation.children[0].children[0].children[0]
+            .getAttribute('href')
+            ?.split('?')[1]
+            .split('=')[1];
+
+        const title =
+            recommendation.children[0].children[1].children[0].children[0]
+                .children[0].children[1].textContent;
+
+        const channelName =
+            recommendation.children[0].children[1].children[0].children[0]
+                .children[1].children[0].children[0].children[0].children[0]
+                .children[0].children[0].children[0].textContent;
+
+        if (!_.isUndefined(id) && recommendation.style.display !== 'none')
+            videos.push({
+                id: id,
+                // Leading and trailing whitespace has to be replaced
+                title: (title ?? '').replace(/(^\s*|\s*$)/gm, ''),
+                channelName: (channelName ?? '').replace(/(^\s*|\s*$)/gm, ''),
+            });
+    }
+
+    return videos;
 };
 
 /**
@@ -113,7 +153,7 @@ const hide = (ids: string[]): void => {
         if (
             _.isUndefined(videoId) ||
             ids.indexOf(videoId) === -1 ||
-            ids.indexOf(videoId) === -1
+            recommendation.style.display === 'none'
         ) {
             continue;
         }
@@ -140,7 +180,8 @@ const getParentElement = (): Promise<HTMLElement> => {
             }
 
             const parent = listOfParents[0];
-            resolve(parent);
+            const recomemendedVideosContainer = parent.querySelector('#items') as HTMLElement;
+            resolve(recomemendedVideosContainer);
         };
         getElement();
     });
@@ -148,6 +189,7 @@ const getParentElement = (): Promise<HTMLElement> => {
 
 export const recommendations = {
     getIds: getIds,
+    getVideos: getVideos,
     hide: hide,
     getParentElement: getParentElement,
     appendFeedbackButtons: appendFeedbackButtons

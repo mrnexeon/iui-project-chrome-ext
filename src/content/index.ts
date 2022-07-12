@@ -1,6 +1,9 @@
+import PQueue from 'p-queue';
 import { filterDistractfulVideos } from '../api/client';
+import { TopBanner } from '../components/top-banner.component';
+import { IFilterHistoryEntryVideo } from '../model/chrome-storage/stats.model';
 import { youtubeDom } from '../service/youtube-dom';
-import { chromeStorage } from '../util/chrome-storage.util';
+import { chromeStorage } from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
 
@@ -15,91 +18,63 @@ const main = async () => {
     }
 
     const videoListParent = (await youtubeDom.recommendations.getParentElement())
+    let promisesQueue = new PQueue({ concurrency: 1 });
 
-        .querySelector('#items'); // <- Hotfix. Description goes below.
+    let cache = {
+        videosIds: { distractful: new Set(), allowed: new Set() }
+    }
 
-    /*
-        Hot fix: the element #items contains list of divs where each div is a recommended video. 
-        Thus, we do observe changes on depth level 1, not 2. As a result, we can set option 
-        subtree of MutationObserver to false and therefore add feedback buttons without triggering
-        the observer.
-    */
+    observeDOM(videoListParent as HTMLElement, () => {
+        promisesQueue.clear();
+        promisesQueue.add(async () => {
+            youtubeDom.ui.renderAboveNav(TopBanner);
 
-    console.log(videoListParent)
-    observeDOM(videoListParent as HTMLElement, async (mutations) => {
-        const recommendedIds = youtubeDom.recommendations.getIds();
+            const recommendedVideos = youtubeDom.recommendations.getVideos();
 
-        // TODO
-        // API Logic goes HERE
+            let videosForHiding: IFilterHistoryEntryVideo[] = [],
+                allowedVideos: IFilterHistoryEntryVideo[] = [],
+                undecidedRecommendedVideos: IFilterHistoryEntryVideo[] = [];
 
-        // REST API requests examples:
-
-        // filterDistractfulVideos(['test1', 'test2']).then(distractful_ids => console.log(distractful_ids)).catch(err => console.error(err))
-        // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
-
-        let unresolvedVideoIds = [], distractfulVideoIds = []//, passedVideoIds = [];
-
-        console.log({ ...youtubeDom.cache })
-
-        for (const id of recommendedIds) {
-
-            // Querying an id from the cache of videos that have been hidden before
-            if (youtubeDom.cache.hiddenIds.has(id)) {
-                distractfulVideoIds.push(id);
-            } else {
-                unresolvedVideoIds.push(id);
-            }
-        }
-
-        const distractful_ids = await filterDistractfulVideos(unresolvedVideoIds);
-        console.log({ distractful_ids });
-
-        distractfulVideoIds.push(...distractful_ids)
-
-        /*
-        for (const id of recommendedIds) {
-
-            // Querying an id from the cache of videos that have been hidden before
-            if (youtubeDom.cache.hiddenIds.has(id)) {
-                distractfulVideoIds.push(id)
-                continue;
-            }
-
-            try {
-                const distractful_ids = await filterDistractfulVideos([id])
-
-                console.log({distractful_ids});
-
-                if (distractful_ids.includes(id)) {
-                    distractfulVideoIds.push(id)
+            for (const recommendedVideo of recommendedVideos) {
+                // Querying an id from the cache of videos that have been hidden before
+                if (cache.videosIds.distractful.has(recommendedVideo.id))
                     continue;
-                }
+
+                else if (cache.videosIds.allowed.has(recommendedVideo.id))
+                    continue;
+
+                undecidedRecommendedVideos.push(recommendedVideo);
             }
-            catch(e) {
-                console.error(e)
+
+            let respondIds = new Set(await filterDistractfulVideos(undecidedRecommendedVideos.map(v => v.id)))
+
+            for (const undecidedRecommendedVideo of undecidedRecommendedVideos) {
+                if (respondIds.has(undecidedRecommendedVideo.id))
+                    videosForHiding.push(undecidedRecommendedVideo)
+                else
+                    allowedVideos.push(undecidedRecommendedVideo)
             }
 
-            if (!(/^\d+$/.test(id))) { // Randomizer: It skips videos which ids starts on the digit.
-                distractfulVideoIds.push(id)
-                continue;
-            }
-            
-            passedVideoIds.push(id)
-        }
-        */
+            if (videosForHiding.length > 0)
+                console.log(new Set(videosForHiding.map(v => v.id)), ' ids have been hidden');
 
-        // Cache hidden videos in order to reduce REST API calls with duplicated ids
-        distractfulVideoIds.forEach(id => youtubeDom.cache.hiddenIds.add(id));
+            // Cache hidden videos in order to reduce REST API calls with duplicated ids
+            videosForHiding.forEach(v => cache.videosIds.distractful.add(v.id));
 
-        console.log({ ...youtubeDom.cache, distractfulVideoIds });
+            youtubeDom.recommendations.hide(videosForHiding.map(v => v.id));
 
-        youtubeDom.recommendations.hide(distractfulVideoIds);
+            //youtubeDom.recommendations.appendFeedbackButtons(allowedVideos.map(v => v.id));
 
-        //youtubeDom.recommendations.appendFeedbackButtons(passedVideoIds);
+            chromeStorage.filterHistory.saveForCurrentVideo(videosForHiding);
+        })
     });
 };
 
 main();
+chromeStorage.filterHistory.get().then((r) => {
+    console.log(r);
+    console.log(JSON.stringify(r).length);
+});
 
 chromeStorage.isFilterEnabled.onChange(() => {
     if (!isYoutubeWatchPage()) {
@@ -114,6 +89,7 @@ chromeStorage.isFilterEnabled.onChange(() => {
         window.location.pathname,
         '?',
         searchParams.toString(),
+        's',
     ].join('');
     window.location.replace(url);
 });

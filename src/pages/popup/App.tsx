@@ -1,16 +1,8 @@
-import {
-    Box,
-    CssBaseline,
-    FormControlLabel,
-    Switch,
-    ThemeProvider,
-    Typography
-} from '@mui/material';
+import { Box, FormControlLabel, Switch } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
-import { chromeStorage } from '../../util/chrome-storage.util';
-
-import { filterDistractfulVideos } from '../../api/client';
+import { chromeStorage } from '../../util/chrome-storage';
+import { TopBar } from './components/top-bar.component';
 
 const App = (): JSX.Element => {
     const theme = usePreferredTheme();
@@ -23,8 +15,8 @@ const App = (): JSX.Element => {
     }, []);
 
     return (
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
+        <>
+            <TopBar />
             <Box
                 sx={{
                     minWidth: '300px',
@@ -33,7 +25,6 @@ const App = (): JSX.Element => {
                 }}
                 textAlign="center"
             >
-                <Typography variant="h4">YouLearn</Typography>
                 <FormControlLabel
                     control={
                         <Switch
@@ -43,9 +34,8 @@ const App = (): JSX.Element => {
                     }
                     label="Filter Recommendations"
                 />
-                <p><button onClick={() => filterDistractfulVideos(["YBN4xI3Z-lc", "gx8_iBO6Sig", "K-MFoZNtt2s", "OmaFy0NKTss"]).then(res => console.log(res)).catch(err => console.error(err))}>Filter Videos</button></p>
             </Box>
-        </ThemeProvider>
+        </>
     );
 };
 
