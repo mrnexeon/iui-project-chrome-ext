@@ -5,7 +5,7 @@ import { observeDOM } from '../util/mutation-observer.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
 
 const main = async () => {
-    if (!isYoutubeWatchPage) {
+    if (!isYoutubeWatchPage()) {
         return;
     }
 
@@ -44,7 +44,7 @@ chromeStorage.filterHistory.get().then((r) => {
 });
 
 chromeStorage.isFilterEnabled.onChange(() => {
-    if (!isYoutubeWatchPage) {
+    if (!isYoutubeWatchPage()) {
         return;
     }
 
