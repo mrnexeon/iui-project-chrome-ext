@@ -1,7 +1,10 @@
+import { filterDistractfulVideos } from '../api/client';
 import { TopBanner } from '../components/top-banner.component';
+import { IFilterHistoryEntryVideo } from '../model/chrome-storage/stats.model';
 import { youtubeDom } from '../service/youtube-dom';
 import { chromeStorage } from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
+import { Mutex } from '../util/mutex.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
 
 const main = async () => {
@@ -17,25 +20,65 @@ const main = async () => {
     youtubeDom.ui.renderAboveNav(TopBanner);
 
     const videoListParent = await youtubeDom.recommendations.getParentElement();
+
+    const cache = {
+        videosIds: { distractful: new Set(), allowed: new Set() },
+    };
+
+    const contentMutex = new Mutex('content-mutex');
     observeDOM(videoListParent as HTMLElement, async () => {
-        const recommendedVideos = youtubeDom.recommendations.getVideos();
-        const videosToFilter = recommendedVideos.filter(
-            (v) => v.id.length > v.id.replace(/(a|b|1|2)/gm, '').length,
-        );
+        contentMutex.acquire().then(async () => {
+            const recommendedVideos = youtubeDom.recommendations.getVideos();
 
-        // TODO
-        // API Logic goes HERE
+            const videosForHiding: IFilterHistoryEntryVideo[] = [],
+                allowedVideos: IFilterHistoryEntryVideo[] = [],
+                undecidedRecommendedVideos: IFilterHistoryEntryVideo[] = [];
 
-        // REST API requests examples:
+            for (const recommendedVideo of recommendedVideos) {
+                // Querying an id from the cache of videos that have been hidden before
+                if (cache.videosIds.distractful.has(recommendedVideo.id))
+                    continue;
+                else if (cache.videosIds.allowed.has(recommendedVideo.id))
+                    continue;
 
-        // filterDistractfulVideos(['test1', 'test2']).then(distractful_ids => console.log(distractful_ids)).catch(err => console.error(err))
-        // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
+                undecidedRecommendedVideos.push(recommendedVideo);
+            }
 
-        youtubeDom.recommendations.hide(videosToFilter.map((v) => v.id));
-        youtubeDom.recommendations.hideMix();
-        youtubeDom.recommendations.hideRelatedChipCloud();
+            const respondIds = new Set(
+                await filterDistractfulVideos(
+                    undecidedRecommendedVideos.map((v) => v.id),
+                ),
+            );
 
-        chromeStorage.filterHistory.saveForCurrentVideo(videosToFilter);
+            console.log('past-req');
+
+            for (const undecidedRecommendedVideo of undecidedRecommendedVideos) {
+                if (respondIds.has(undecidedRecommendedVideo.id))
+                    videosForHiding.push(undecidedRecommendedVideo);
+                else allowedVideos.push(undecidedRecommendedVideo);
+            }
+
+            if (videosForHiding.length > 0)
+                console.log(
+                    new Set(videosForHiding.map((v) => v.id)),
+                    ' ids have been hidden',
+                );
+
+            // Cache hidden videos in order to reduce REST API calls with duplicated ids
+            videosForHiding.forEach((v) =>
+                cache.videosIds.distractful.add(v.id),
+            );
+
+            youtubeDom.recommendations.hide(videosForHiding.map((v) => v.id));
+            youtubeDom.recommendations.hideMix();
+            youtubeDom.recommendations.hideRelatedChipCloud();
+
+            //youtubeDom.ui.appendFeedbackButtons(allowedVideos.map(v => v.id));
+
+            chromeStorage.filterHistory.saveForCurrentVideo(videosForHiding);
+
+            contentMutex.release();
+        });
     });
 };
 

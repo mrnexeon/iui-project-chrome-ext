@@ -19,7 +19,7 @@ export const observeDOM = (
 
         mutationObserver.observe(observedNode, {
             childList: true,
-            subtree: true,
+            subtree: false,
         });
 
         return mutationObserver;

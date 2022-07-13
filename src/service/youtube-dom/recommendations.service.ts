@@ -14,6 +14,14 @@ const getIds = (): string[] => {
 
     const ids: string[] = [];
     for (const recommendation of recommendations) {
+        const yt_simple_endpoint = recommendation.querySelector(
+            '.yt-simple-endpoint',
+        );
+
+        if (_.isNull(yt_simple_endpoint)) {
+            continue;
+        }
+
         // Extracts the video out of the href attribute
         const id = recommendation.children[0].children[0].children[0]
             .getAttribute('href')
@@ -28,10 +36,9 @@ const getIds = (): string[] => {
 };
 
 /**
- * Extracts the recommended videos' id,
- * title and channelName from the youtube DOM
+ * Extracts the recommended videos
  *
- * @returns list of video IDs
+ * @returns list of videos with ids, titles and channel names
  */
 const getVideos = (): IFilterHistoryEntryVideo[] => {
     const recommendationsCollection = document.getElementsByTagName(
@@ -81,7 +88,16 @@ const hide = (ids: string[]): void => {
 
     for (const recommendation of recommendations) {
         // Extracts the video out of the href attribute
-        const videoId = recommendation.children[0].children[0].children[0]
+        const yt_simple_endpoint = recommendation.querySelector(
+            '.yt-simple-endpoint',
+        );
+
+        if (_.isNull(yt_simple_endpoint)) {
+            continue;
+        }
+
+        // Extracts the video out of the href attribute
+        const videoId = yt_simple_endpoint
             .getAttribute('href')
             ?.split('?')[1]
             .split('=')[1];
@@ -136,16 +152,23 @@ const hideRelatedChipCloud = (): void => {
 const getParentElement = (): Promise<HTMLElement> => {
     return new Promise<HTMLElement>((resolve) => {
         const getElement = () => {
-            const listOfParents = document.getElementsByTagName(
-                'ytd-watch-next-secondary-results-renderer',
+            const children = document.getElementsByTagName(
+                'ytd-compact-video-renderer',
             ) as HTMLCollectionOf<HTMLElement>;
 
-            if (listOfParents.length === 0) {
+            if (children.length === 0) {
                 setTimeout(getElement, 10);
                 return;
             }
 
-            const parent = listOfParents[0];
+            const parent = children[0].parentElement;
+
+            if (_.isNull(parent)) {
+                setTimeout(getElement, 10);
+                return;
+            }
+
+            console.log(parent);
             resolve(parent);
         };
         getElement();
