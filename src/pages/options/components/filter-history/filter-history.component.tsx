@@ -4,7 +4,7 @@ import _ from 'lodash';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IFilterHistoryEntry } from '../../../../model/chrome-storage/stats.model';
-import { chromeStorage } from '../../../../util/chrome-storage';
+import * as chromeStorage from '../../../../util/chrome-storage';
 import { FilterHistoryVideo } from './filter-history-video.component';
 
 /**

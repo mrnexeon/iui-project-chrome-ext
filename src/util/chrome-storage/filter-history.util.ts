@@ -4,7 +4,7 @@ import {
     IFilterHistoryEntry,
     IFilterHistoryEntryVideo,
 } from '../../model/chrome-storage/stats.model';
-import { youtubeDom } from '../../service/youtube-dom';
+import * as youtubeDom from '../../service/youtube-dom';
 import { Mutex } from '../mutex.util';
 import { sessionId } from '../session.util';
 import { stringUtil } from '../string.util';

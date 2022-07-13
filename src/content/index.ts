@@ -1,8 +1,9 @@
 import { filterDistractfulVideos } from '../api/client';
+import { FeedbackButton } from '../components/feedback-button.component';
 import { TopBanner } from '../components/top-banner.component';
 import { IFilterHistoryEntryVideo } from '../model/chrome-storage/stats.model';
-import { youtubeDom } from '../service/youtube-dom';
-import { chromeStorage } from '../util/chrome-storage';
+import * as youtubeDom from '../service/youtube-dom';
+import * as chromeStorage from '../util/chrome-storage';
 import { observeDOM } from '../util/mutation-observer.util';
 import { Mutex } from '../util/mutex.util';
 import { isYoutubeWatchPage } from '../util/url-check.util';
@@ -72,7 +73,7 @@ const main = async () => {
             ]);
             youtubeDom.recommendations.hideMix();
             youtubeDom.recommendations.hideRelatedChipCloud();
-            youtubeDom.ui.appendFeedbackButtons();
+            youtubeDom.ui.appendFeedbackButtons(FeedbackButton);
 
             chromeStorage.filterHistory.saveForCurrentVideo(videosForHiding);
 

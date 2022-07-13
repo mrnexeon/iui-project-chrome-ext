@@ -1,7 +1,7 @@
 import { Box, FormControlLabel, Switch } from '@mui/material';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
-import { chromeStorage } from '../../util/chrome-storage';
+import * as chromeStorage from '../../util/chrome-storage';
 import { TopBar } from './components/top-bar.component';
 
 const App = (): JSX.Element => {
