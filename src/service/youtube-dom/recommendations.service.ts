@@ -14,9 +14,11 @@ const getIds = (): string[] => {
 
     const ids: string[] = [];
     for (const recommendation of recommendations) {
-        const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
+        const yt_simple_endpoint = recommendation.querySelector(
+            '.yt-simple-endpoint',
+        );
 
-        if (!yt_simple_endpoint) {
+        if (_.isNull(yt_simple_endpoint)) {
             continue;
         }
 
@@ -85,9 +87,10 @@ const hide = (ids: string[]): void => {
     const recommendations = Array.from(recommendationsCollection);
 
     for (const recommendation of recommendations) {
-
         // Extracts the video out of the href attribute
-        const yt_simple_endpoint = recommendation.querySelector('.yt-simple-endpoint');
+        const yt_simple_endpoint = recommendation.querySelector(
+            '.yt-simple-endpoint',
+        );
 
         if (_.isNull(yt_simple_endpoint)) {
             continue;
@@ -119,18 +122,24 @@ const hide = (ids: string[]): void => {
 const getParentElement = (): Promise<HTMLElement> => {
     return new Promise<HTMLElement>((resolve) => {
         const getElement = () => {
-            const listOfParents = document.getElementsByTagName(
-                'ytd-watch-next-secondary-results-renderer',
+            const children = document.getElementsByTagName(
+                'ytd-compact-video-renderer',
             ) as HTMLCollectionOf<HTMLElement>;
 
-            if (listOfParents.length === 0) {
+            if (children.length === 0) {
                 setTimeout(getElement, 10);
                 return;
             }
 
-            const parent = listOfParents[0];
-            const recomemendedVideosContainer = parent.querySelector('#items') as HTMLElement;
-            resolve(recomemendedVideosContainer);
+            const parent = children[0].parentElement;
+
+            if (_.isNull(parent)) {
+                setTimeout(getElement, 10);
+                return;
+            }
+
+            console.log(parent);
+            resolve(parent);
         };
         getElement();
     });
