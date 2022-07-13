@@ -21,7 +21,7 @@ export const TopBar: React.FunctionComponent = (): JSX.Element => {
                         chrome.runtime.openOptionsPage();
                     }}
                 >
-                    Options
+                    History
                 </Button>
             </Toolbar>
         </AppBar>

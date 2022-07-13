@@ -7,7 +7,7 @@ import {
 import { youtubeDom } from '../../service/youtube-dom';
 import { Mutex } from '../mutex.util';
 import { sessionId } from '../session.util';
-import { stringUtil } from '../string.utilt';
+import { stringUtil } from '../string.util';
 import { isYoutubeWatchPage } from '../url-check.util';
 
 const storageKeys = {
