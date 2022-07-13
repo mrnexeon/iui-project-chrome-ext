@@ -32,6 +32,8 @@ const main = async () => {
         // reportFeedback('test1', true).then(success => console.log(success)).catch(err => console.error(err))
 
         youtubeDom.recommendations.hide(videosToFilter.map((v) => v.id));
+        youtubeDom.recommendations.hideMix();
+        youtubeDom.recommendations.hideRelatedChipCloud();
 
         chromeStorage.filterHistory.saveForCurrentVideo(videosToFilter);
     });
