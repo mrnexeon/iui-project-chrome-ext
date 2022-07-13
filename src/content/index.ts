@@ -70,6 +70,8 @@ const main = async () => {
             );
 
             youtubeDom.recommendations.hide(videosForHiding.map((v) => v.id));
+            youtubeDom.recommendations.hideMix();
+            youtubeDom.recommendations.hideRelatedChipCloud();
 
             //youtubeDom.ui.appendFeedbackButtons(allowedVideos.map(v => v.id));
 

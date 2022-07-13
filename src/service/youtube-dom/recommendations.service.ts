@@ -115,6 +115,36 @@ const hide = (ids: string[]): void => {
 };
 
 /**
+ * Hides YouTube's radio station recommendations
+ */
+const hideMix = (): void => {
+    const mixes = Array.from(
+        document.getElementsByTagName(
+            'ytd-compact-radio-renderer',
+        ) as HTMLCollectionOf<HTMLElement>,
+    );
+
+    for (const mix of mixes) {
+        mix.style.display = 'none';
+    }
+};
+
+/**
+ * Hides YouTube's related chip cloud renderer
+ */
+const hideRelatedChipCloud = (): void => {
+    const chipClouds = Array.from(
+        document.getElementsByTagName(
+            'yt-related-chip-cloud-renderer',
+        ) as HTMLCollectionOf<HTMLElement>,
+    );
+
+    for (const chipCloud of chipClouds) {
+        chipCloud.style.display = 'none';
+    }
+};
+
+/**
  * Gets the parent element of the recommendations async
  *
  * @returns A promise which resolves with HTML Element
@@ -149,5 +179,7 @@ export const recommendations = {
     getIds: getIds,
     getVideos: getVideos,
     hide: hide,
+    hideMix: hideMix,
+    hideRelatedChipCloud: hideRelatedChipCloud,
     getParentElement: getParentElement,
 };

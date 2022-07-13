@@ -8,17 +8,29 @@ import { render } from 'react-dom';
  *
  * @param Component Component to render above youtube nav
  */
-const renderAboveNav = (Component: React.FunctionComponent): void => {
+const renderAboveNav = async (
+    Component: React.FunctionComponent,
+): Promise<void> => {
     const ytdApp = (
         document.getElementsByTagName(
             'ytd-app',
         ) as HTMLCollectionOf<HTMLElement>
     )[0];
-    ytdApp.style.marginTop = '30px';
-
     const mastheadContainer = document.getElementById(
         'masthead-container',
     ) as HTMLElement;
+
+    if (
+        _.isUndefined(ytdApp) ||
+        _.isNull(ytdApp) ||
+        _.isUndefined(mastheadContainer) ||
+        _.isNull(mastheadContainer)
+    ) {
+        setTimeout(() => renderAboveNav(Component), 500);
+        return;
+    }
+
+    ytdApp.style.marginTop = '30px';
     mastheadContainer.style.top = '30px';
 
     const el = document.createElement('div');

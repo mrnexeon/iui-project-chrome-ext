@@ -28,8 +28,7 @@ export const TopBanner: React.FunctionComponent = (): JSX.Element => {
                     width: '100vw',
                     height: '30px',
                     display: 'flex',
-                    alignItems: 'end',
-                    paddingBottom: '3px',
+                    alignItems: 'center',
                     borderRadius: 0,
                 }}
                 elevation={1}
