@@ -68,9 +68,29 @@ const useValue = (): string[] => {
     return _val;
 };
 
+/**
+ * EventListener that reacts on changes to isFilterEnabled
+ *
+ * @param callback
+ */
+const onChange = (callback: () => void): void => {
+    const internalCallback = (changes: {
+        [name: string]: chrome.storage.StorageChange;
+    }): void => {
+        if (!_.isUndefined(changes[storageKeys.hiddenVideos])) {
+            callback();
+        }
+    };
+
+    chrome.storage.local.onChanged.addListener(
+        internalCallback.bind(hiddenVideos),
+    );
+};
+
 export const hiddenVideos = {
     set: set,
     get: get,
     push: push,
     useValue: useValue,
+    onChange: onChange,
 };

@@ -90,7 +90,11 @@ const saveForCurrentVideo = async (
               filteredVideos: [],
           }
         : currentHistoryEntry;
-    newHistoryEntry.filteredVideos.push(...hiddenVideos);
+    const uniqueVideos = _.uniqBy(
+        [...newHistoryEntry.filteredVideos, ...hiddenVideos],
+        (e) => e.id,
+    );
+    newHistoryEntry.filteredVideos = uniqueVideos;
 
     await save(newHistoryEntry);
 
