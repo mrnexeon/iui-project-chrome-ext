@@ -18,20 +18,20 @@ const main = async () => {
     }
 
     const videoListParent = (await youtubeDom.recommendations.getParentElement())
-    let promisesQueue = new PQueue({ concurrency: 1 });
+    const promisesQueue = new PQueue({ concurrency: 1 });
 
-    let cache = {
+    const cache = {
         videosIds: { distractful: new Set(), allowed: new Set() }
     }
+
+    youtubeDom.ui.renderAboveNav(TopBanner);
 
     observeDOM(videoListParent as HTMLElement, () => {
         promisesQueue.clear();
         promisesQueue.add(async () => {
-            youtubeDom.ui.renderAboveNav(TopBanner);
-
             const recommendedVideos = youtubeDom.recommendations.getVideos();
 
-            let videosForHiding: IFilterHistoryEntryVideo[] = [],
+            const videosForHiding: IFilterHistoryEntryVideo[] = [],
                 allowedVideos: IFilterHistoryEntryVideo[] = [],
                 undecidedRecommendedVideos: IFilterHistoryEntryVideo[] = [];
 
@@ -46,7 +46,7 @@ const main = async () => {
                 undecidedRecommendedVideos.push(recommendedVideo);
             }
 
-            let respondIds = new Set(await filterDistractfulVideos(undecidedRecommendedVideos.map(v => v.id)))
+            const respondIds = new Set(await filterDistractfulVideos(undecidedRecommendedVideos.map(v => v.id)))
 
             for (const undecidedRecommendedVideo of undecidedRecommendedVideos) {
                 if (respondIds.has(undecidedRecommendedVideo.id))
@@ -63,7 +63,7 @@ const main = async () => {
 
             youtubeDom.recommendations.hide(videosForHiding.map(v => v.id));
 
-            //youtubeDom.recommendations.appendFeedbackButtons(allowedVideos.map(v => v.id));
+            //youtubeDom.ui.appendFeedbackButtons(allowedVideos.map(v => v.id));
 
             chromeStorage.filterHistory.saveForCurrentVideo(videosForHiding);
         })
