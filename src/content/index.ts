@@ -44,36 +44,35 @@ const main = async () => {
                 undecidedRecommendedVideos.push(recommendedVideo);
             }
 
-            const respondIds = new Set(
-                await filterDistractfulVideos(
-                    undecidedRecommendedVideos.map((v) => v.id),
-                ),
-            );
-
-            console.log('past-req');
-
-            for (const undecidedRecommendedVideo of undecidedRecommendedVideos) {
-                if (respondIds.has(undecidedRecommendedVideo.id))
-                    videosForHiding.push(undecidedRecommendedVideo);
-                else allowedVideos.push(undecidedRecommendedVideo);
-            }
-
-            if (videosForHiding.length > 0)
-                console.log(
-                    new Set(videosForHiding.map((v) => v.id)),
-                    ' ids have been hidden',
+            try {
+                const responseIds = new Set(
+                    await filterDistractfulVideos(
+                        undecidedRecommendedVideos.map((v) => v.id),
+                    ),
                 );
+
+                for (const undecidedRecommendedVideo of undecidedRecommendedVideos) {
+                    if (responseIds.has(undecidedRecommendedVideo.id))
+                        videosForHiding.push(undecidedRecommendedVideo);
+                    else allowedVideos.push(undecidedRecommendedVideo);
+                }
+            } catch (e) {
+                console.log(e);
+            }
 
             // Cache hidden videos in order to reduce REST API calls with duplicated ids
             videosForHiding.forEach((v) =>
                 cache.videosIds.distractful.add(v.id),
             );
 
-            youtubeDom.recommendations.hide(videosForHiding.map((v) => v.id));
+            const hiddenVideos = await chromeStorage.hiddenVideos.get();
+            youtubeDom.recommendations.hide([
+                ...videosForHiding.map((v) => v.id),
+                ...hiddenVideos,
+            ]);
             youtubeDom.recommendations.hideMix();
             youtubeDom.recommendations.hideRelatedChipCloud();
-
-            //youtubeDom.ui.appendFeedbackButtons(allowedVideos.map(v => v.id));
+            youtubeDom.ui.appendFeedbackButtons();
 
             chromeStorage.filterHistory.saveForCurrentVideo(videosForHiding);
 
@@ -83,10 +82,7 @@ const main = async () => {
 };
 
 main();
-chromeStorage.filterHistory.get().then((r) => {
-    console.log(r);
-    console.log(JSON.stringify(r).length);
-});
+chromeStorage.hiddenVideos.get().then(console.log);
 
 chromeStorage.isFilterEnabled.onChange(() => {
     if (!isYoutubeWatchPage()) {
