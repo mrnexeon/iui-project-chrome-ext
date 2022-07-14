@@ -1,4 +1,4 @@
-import { filterDistractfulVideos } from '../api/client';
+import { filterAndSortDistractfulVideos } from '../api/client';
 import { FeedbackButton } from '../components/feedback-button.component';
 import { TopBanner } from '../components/top-banner.component';
 import { IFilterHistoryEntryVideo } from '../model/chrome-storage/stats.model';
@@ -49,18 +49,20 @@ const main = async () => {
                         !filterCache.allowed.has(v.id),
                 );
 
+            const threshold = await chromeStorage.filterThreshold.get();
             const responseIds =
                 videosToAnalyze.length === 0
                     ? []
-                    : await filterDistractfulVideos(
+                    : await filterAndSortDistractfulVideos(
                           videosToAnalyze.map((v) => v.id),
+                          threshold,
                       );
 
             for (const videoToAnalyze of videosToAnalyze) {
                 if (responseIds.indexOf(videoToAnalyze.id) > -1) {
-                    filterCache.distractful.add(videoToAnalyze.id);
-                } else {
                     filterCache.allowed.add(videoToAnalyze.id);
+                } else {
+                    filterCache.distractful.add(videoToAnalyze.id);
                 }
             }
 
@@ -86,7 +88,7 @@ const main = async () => {
 main();
 chromeStorage.hiddenVideos.get().then(console.log);
 
-chromeStorage.isFilterEnabled.onChange(() => {
+const reload = () => {
     if (!isYoutubeWatchPage()) {
         return;
     }
@@ -102,4 +104,7 @@ chromeStorage.isFilterEnabled.onChange(() => {
         's',
     ].join('');
     window.location.replace(url);
-});
+};
+
+chromeStorage.isFilterEnabled.onChange(reload);
+chromeStorage.filterThreshold.onChange(reload);

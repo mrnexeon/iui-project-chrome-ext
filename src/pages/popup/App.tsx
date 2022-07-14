@@ -1,4 +1,13 @@
-import { Box, FormControlLabel, Switch } from '@mui/material';
+import {
+    Box,
+    FormControl,
+    FormControlLabel,
+    InputLabel,
+    MenuItem,
+    Select,
+    Switch,
+} from '@mui/material';
+import _ from 'lodash';
 import React from 'react';
 import { usePreferredTheme } from '../../hooks/theme.hook';
 import * as chromeStorage from '../../util/chrome-storage';
@@ -13,6 +22,8 @@ const App = (): JSX.Element => {
     const onToggleClick = React.useCallback((e) => {
         setIsFilterEnabled(e.target.checked);
     }, []);
+
+    const [threshold, setThreshold] = chromeStorage.filterThreshold.useValue();
 
     return (
         <>
@@ -34,6 +45,26 @@ const App = (): JSX.Element => {
                     }
                     label="Filter Recommendations"
                 />
+                <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
+                    <InputLabel id="threshold-selector">
+                        Filter Level
+                    </InputLabel>
+                    <Select
+                        labelId="threshold-selector"
+                        id="threshold-selector-select"
+                        value={threshold}
+                        label="Filter Level"
+                        onChange={(e) =>
+                            _.isNumber(e.target.value)
+                                ? setThreshold(e.target.value)
+                                : void 0
+                        }
+                    >
+                        <MenuItem value={0.5}>Light</MenuItem>
+                        <MenuItem value={0.7}>Medium</MenuItem>
+                        <MenuItem value={0.9}>Heavy</MenuItem>
+                    </Select>
+                </FormControl>
             </Box>
         </>
     );
