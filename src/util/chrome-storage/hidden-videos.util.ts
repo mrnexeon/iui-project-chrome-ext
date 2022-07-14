@@ -87,10 +87,18 @@ const onChange = (callback: () => void): void => {
     );
 };
 
+/**
+ * Clears the hidden videos
+ */
+const clear = (): void => {
+    chrome.storage.local.remove(storageKeys.hiddenVideos);
+};
+
 export const hiddenVideos = {
     set: set,
     get: get,
     push: push,
     useValue: useValue,
     onChange: onChange,
+    clear: clear,
 };

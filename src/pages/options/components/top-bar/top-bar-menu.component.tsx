@@ -1,6 +1,7 @@
 import { MoreVert } from '@mui/icons-material';
 import { IconButton, Menu } from '@mui/material';
 import * as React from 'react';
+import { filterHistory, hiddenVideos } from '../../../../util/chrome-storage';
 import { ClearHistoryMenuItem } from './clear-menu-item.component';
 
 /**
@@ -48,9 +49,18 @@ export const TopBarMenu: React.FunctionComponent = (): JSX.Element => {
                 }}
             >
                 <ClearHistoryMenuItem
-                    onClick={() => {
-                        chrome.storage.local.remove('filter-history');
-                    }}
+                    onClick={filterHistory.clear}
+                    menuText="Clear filter history"
+                    message="Do you want to clear the filter history?"
+                    confirm="Clear"
+                    cancel="Cancel"
+                />
+                <ClearHistoryMenuItem
+                    onClick={hiddenVideos.clear}
+                    menuText="Clear hidden videos"
+                    message="Do you want to clear your hidden videos?"
+                    confirm="Clear"
+                    cancel="Cancel"
                 />
             </Menu>
         </>

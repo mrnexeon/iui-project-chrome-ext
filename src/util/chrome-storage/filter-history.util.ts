@@ -127,9 +127,17 @@ const useValue = (): IFilterHistoryEntry[] => {
     return _val;
 };
 
+/**
+ * Clears the filter history
+ */
+const clear = (): void => {
+    chrome.storage.local.remove(storageKeys.filterStats);
+};
+
 export const filterHistory = {
     save: save,
     get: get,
     saveForCurrentVideo: saveForCurrentVideo,
     useValue: useValue,
+    clear: clear,
 };
