@@ -26,7 +26,7 @@ const main = async () => {
     youtubeDom.ui.renderAboveNav(TopBanner);
 
     const filterCache = {
-        distractful: new Set<string>(),
+        distractful: new Set<string>(await chromeStorage.hiddenVideos.get()),
         allowed: new Set<string>(),
     };
     chromeStorage.hiddenVideos.onChange(() =>
@@ -49,9 +49,12 @@ const main = async () => {
                         !filterCache.allowed.has(v.id),
                 );
 
-            const responseIds = await filterDistractfulVideos(
-                videosToAnalyze.map((v) => v.id),
-            );
+            const responseIds =
+                videosToAnalyze.length === 0
+                    ? []
+                    : await filterDistractfulVideos(
+                          videosToAnalyze.map((v) => v.id),
+                      );
 
             for (const videoToAnalyze of videosToAnalyze) {
                 if (responseIds.indexOf(videoToAnalyze.id) > -1) {
