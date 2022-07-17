@@ -1,0 +1,93 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "1.1",
+    "title" : "YouLearn REST API",
+    "description" : "The system that automatically judjes if the YouTube video distractful for an education"
+  },
+  "paths" : {
+    "/api/filterDistractfulVideos" : {
+      "post" : {
+        "summary" : "Filters Distractful Videos",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "input",
+          "description" : "Input Data",
+          "schema" : {
+            "type" : "object",
+            "properties" : {
+              "recommended_ids" : {
+                "type" : "array",
+                "description" : "IDs of the videos recommended by the YouTube",
+                "items" : {
+                  "type" : "string"
+                },
+                "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4", "arDNwjTaHQg" ]
+              }
+            },
+            "required" : [ "recommended_ids" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "distractful_ids" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  },
+                  "example" : [ "jwUrzhUNA-M", "WtkD5BG1QE4" ],
+                  "description" : "The list of the videos IDs which the system found distractful"
+                }
+              },
+              "required" : [ "distractful_ids" ]
+            }
+          },
+          "500" : {
+            "description" : "Intenral server error happend",
+            "schema" : {
+              "type" : "string",
+              "description" : "The message about the error",
+              "example" : "The Google API is not reachable"
+            }
+          }
+        }
+      }
+    },
+    "/api/feedback" : {
+      "post" : {
+        "summary" : "Reports feedback about the filtered videos accuracy",
+        "consumes" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "feedback",
+          "description" : "The YouTube video feedback about the distraction",
+          "schema" : {
+            "type" : "object",
+            "properties" : {
+              "video_id" : {
+                "type" : "string"
+              },
+              "distractful" : {
+                "type" : "boolean"
+              }
+            },
+            "required" : [ "video_id", "distractful" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          }
+        }
+      }
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/mrnexeon/YouLearn/1.1",
+  "schemes" : [ "https" ]
+}

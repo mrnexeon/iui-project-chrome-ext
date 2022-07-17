@@ -7,18 +7,25 @@
     "scripts": {
         "build": "rollup -c",
         "release": "cross-env NODE_ENV=production rollup -c",
+        "generate-api-client": "npx swagger-typescript-api -p ./src/api/client/swagger.json -o ./src/api/client -n client.ts",
         "start": "rollup -c -w",
         "test": "jest"
     },
     "dependencies": {
+        "@emotion/react": "^11.9.0",
+        "@emotion/styled": "^11.8.1",
+        "@mui/icons-material": "^5.8.4",
+        "@mui/material": "^5.8.2",
         "@rollup/plugin-replace": "^3.0.0",
         "@types/firefox-webext-browser": "^82.0.0",
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "chrome-types": "^0.1.113",
+        "lodash": "^4.17.21",
         "prettier": "^2.2.1",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "react-router-dom": "^6.3.0",
         "webextension-polyfill": "^0.7.0"
     },
     "devDependencies": {
