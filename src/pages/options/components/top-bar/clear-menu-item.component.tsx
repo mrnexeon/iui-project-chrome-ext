@@ -12,6 +12,10 @@ import * as React from 'react';
 
 interface IProps {
     onClick: () => void;
+    menuText: string;
+    message: string;
+    confirm: string;
+    cancel: string;
 }
 
 /**
@@ -39,7 +43,7 @@ export const ClearHistoryMenuItem: React.FunctionComponent<IProps> = (
                 <ListItemIcon>
                     <Clear />
                 </ListItemIcon>
-                <ListItemText>Clear History</ListItemText>
+                <ListItemText>{props.menuText}</ListItemText>
             </MenuItem>
             <Dialog
                 open={open}
@@ -48,13 +52,20 @@ export const ClearHistoryMenuItem: React.FunctionComponent<IProps> = (
                 aria-describedby="clear-history-dialog-description"
             >
                 <DialogTitle id="clear-history-dialog-title">
-                    Are your sure you want to clear your filter history?
+                    {props.message}
                 </DialogTitle>
                 <DialogActions>
                     <Button onClick={handleClose} autoFocus>
-                        Cancel
+                        {props.cancel}
                     </Button>
-                    <Button onClick={props.onClick}>Clear</Button>
+                    <Button
+                        onClick={() => {
+                            props.onClick();
+                            handleClose();
+                        }}
+                    >
+                        {props.confirm}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

@@ -4,7 +4,7 @@ import {
     IFilterHistoryEntry,
     IFilterHistoryEntryVideo,
 } from '../../model/chrome-storage/stats.model';
-import { youtubeDom } from '../../service/youtube-dom';
+import * as youtubeDom from '../../service/youtube-dom';
 import { Mutex } from '../mutex.util';
 import { sessionId } from '../session.util';
 import { stringUtil } from '../string.util';
@@ -90,7 +90,11 @@ const saveForCurrentVideo = async (
               filteredVideos: [],
           }
         : currentHistoryEntry;
-    newHistoryEntry.filteredVideos.push(...hiddenVideos);
+    const uniqueVideos = _.uniqBy(
+        [...newHistoryEntry.filteredVideos, ...hiddenVideos],
+        (e) => e.id,
+    );
+    newHistoryEntry.filteredVideos = uniqueVideos;
 
     await save(newHistoryEntry);
 
@@ -123,9 +127,17 @@ const useValue = (): IFilterHistoryEntry[] => {
     return _val;
 };
 
+/**
+ * Clears the filter history
+ */
+const clear = (): void => {
+    chrome.storage.local.remove(storageKeys.filterStats);
+};
+
 export const filterHistory = {
     save: save,
     get: get,
     saveForCurrentVideo: saveForCurrentVideo,
     useValue: useValue,
+    clear: clear,
 };

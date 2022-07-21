@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import * as React from 'react';
 import { render } from 'react-dom';
-import { FeedbackButton } from '../../components/feedback-button.component';
 
 /**
  * Renders the given component above the youtube navbar
@@ -46,7 +45,9 @@ const renderAboveNav = async (
 /**
  * Places a feedback button into recommended video block
  */
-const appendFeedbackButtons = (): void => {
+const renderInRecommendationMenu = (
+    Component: React.FunctionComponent<{ id: string }>,
+): void => {
     const recommendationsCollection = document.getElementsByTagName(
         'ytd-compact-video-renderer',
     ) as HTMLCollectionOf<HTMLElement>;
@@ -78,11 +79,11 @@ const appendFeedbackButtons = (): void => {
         ytdMenuRenderer.style.flexDirection = 'column';
 
         ytdMenuRenderer.appendChild(feedback_button);
-        render(<FeedbackButton id={id} />, feedback_button);
+        render(<Component id={id} />, feedback_button);
     }
 };
 
 export const ui = {
     renderAboveNav: renderAboveNav,
-    appendFeedbackButtons: appendFeedbackButtons,
+    appendFeedbackButtons: renderInRecommendationMenu,
 };
