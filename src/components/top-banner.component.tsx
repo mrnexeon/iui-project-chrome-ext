@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { Link, Paper, Typography } from '@mui/material';
 import * as React from 'react';
 import { usePreferredTheme } from '../hooks/theme.hook';
-import { chromeStorage } from '../util/chrome-storage';
+import * as chromeStorage from '../util/chrome-storage';
 
 /**
  * Top Banner which informs user about enabled filtering

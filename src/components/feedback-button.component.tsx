@@ -11,8 +11,8 @@ import {
 import * as React from 'react';
 import { reportFeedback } from '../api/client';
 import { usePreferredTheme } from '../hooks/theme.hook';
-import { recommendations } from '../service/youtube-dom/recommendations.service';
-import { hiddenVideos } from '../util/chrome-storage/hidden-videos.util';
+import { recommendations } from '../service/youtube-dom';
+import { hiddenVideos } from '../util/chrome-storage';
 
 interface IProps {
     id: string;

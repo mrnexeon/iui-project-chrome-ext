@@ -5,7 +5,7 @@ import _ from 'lodash';
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { reportFeedback } from '../../../../api/client';
-import { chromeStorage } from '../../../../util/chrome-storage';
+import * as chromeStorage from '../../../../util/chrome-storage';
 import { FilterHistoryEntryVideo } from './filter-history-entry-video.component';
 
 /**
@@ -30,7 +30,7 @@ export const FilterHistoryEntry: React.FunctionComponent = (): JSX.Element => {
 
         const response = await reportFeedback(id, false);
 
-        console.debug('Feedback has been sent!', {id, response})
+        console.debug('Feedback has been sent!', { id, response });
     };
 
     return (

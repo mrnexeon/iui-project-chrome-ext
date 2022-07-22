@@ -23,11 +23,12 @@ const getIds = (): string[] => {
         }
 
         // Extracts the video out of the href attribute
-        const id = recommendation.children[0].children[0].children[0]
-            .getAttribute('href')
-            ?.split('?')[1]
-            .split('=')[1];
-        if (!_.isUndefined(id) && recommendation.style.display !== 'none') {
+        const params = new URLSearchParams(
+            yt_simple_endpoint.getAttribute('href')?.split('?')[1],
+        );
+        const id = params.get('v');
+
+        if (!_.isNull(id) && recommendation.style.display !== 'none') {
             ids.push(id);
         }
     }
@@ -48,10 +49,22 @@ const getVideos = (): IFilterHistoryEntryVideo[] => {
 
     const videos: IFilterHistoryEntryVideo[] = [];
     for (const recommendation of recommendations) {
-        const id = recommendation.children[0].children[0].children[0]
-            .getAttribute('href')
-            ?.split('?')[1]
-            .split('=')[1];
+        // Extracts the video out of the href attribute
+        const yt_simple_endpoint = recommendation.querySelector(
+            '.yt-simple-endpoint',
+        );
+
+        if (_.isNull(yt_simple_endpoint)) {
+            continue;
+        }
+
+        // Extracts the video out of the href attribute
+        const params = new URLSearchParams(
+            yt_simple_endpoint.getAttribute('href')?.split('?')[1],
+        );
+        const id = params.get('v');
+
+        console.log(id);
 
         const title =
             recommendation.children[0].children[1].children[0].children[0]
@@ -62,7 +75,7 @@ const getVideos = (): IFilterHistoryEntryVideo[] => {
                 .children[1].children[0].children[0].children[0].children[0]
                 .children[0].children[0].children[0].textContent;
 
-        if (!_.isUndefined(id) && recommendation.style.display !== 'none')
+        if (!_.isNull(id) && recommendation.style.display !== 'none')
             videos.push({
                 id: id,
                 // Leading and trailing whitespace has to be replaced
@@ -97,13 +110,13 @@ const hide = (ids: string[]): void => {
         }
 
         // Extracts the video out of the href attribute
-        const videoId = yt_simple_endpoint
-            .getAttribute('href')
-            ?.split('?')[1]
-            .split('=')[1];
+        const params = new URLSearchParams(
+            yt_simple_endpoint.getAttribute('href')?.split('?')[1],
+        );
+        const videoId = params.get('v');
 
         if (
-            _.isUndefined(videoId) ||
+            _.isNull(videoId) ||
             ids.indexOf(videoId) === -1 ||
             recommendation.style.display === 'none'
         ) {
