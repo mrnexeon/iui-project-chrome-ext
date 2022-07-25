@@ -3,7 +3,7 @@
 ## Prerequisites
 As YouLearn's backend server has no SSL certificate we have to tweak chrome in order for chrome to not block our requests. If we would release this project to the public we would sort this out, but for now it is fine.
 
-### Teak chrome to accept mixed content for YouTube
+### Tweak chrome's settings to accept mixed content for YouTube
 1. Open Youtube
 2. Click on the lock in front of the URL
 <img width="502" alt="image" src="https://user-images.githubusercontent.com/53370847/180845576-2738b82e-2b34-4547-bde0-871ca67c579b.png">
