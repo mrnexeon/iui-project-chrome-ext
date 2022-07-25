@@ -1,72 +1,35 @@
-# TypeScript React Chrome Extension Boilerplate
+# YouLearn
 
-A basic TypeScript React Chrome Extension boilerplate that gets you started quickly. It supports **TypeScript**, **JSX**, and **automatic reloading** during development. Jest, ESLint and Prettier included, all bundled using [Rollup](https://rollupjs.org/guide/en/) and [`rollup-plugin-chrome-extension`](https://extend-chrome.dev/rollup-plugin).
+## Prerequisites
+As YouLearn's backend server has no SSL certificate we have to tweak chrome in order for chrome to not block our requests. If we would release this project to the public we would sort this out, but for now it is fine.
 
-## Get Started
+### Teak chrome to accept mixed content for YouTube
+1. Open Youtube
+2. Click on the lock in front of the URL
+<img width="502" alt="image" src="https://user-images.githubusercontent.com/53370847/180845576-2738b82e-2b34-4547-bde0-871ca67c579b.png">
+3. Click on "Site settings"
+<img width="363" alt="image" src="https://user-images.githubusercontent.com/53370847/180845679-183c983d-ceeb-4af3-96b7-b811907808bc.png">
+4. Under "Permissions" locate "Insecure content" and change to "Allow"
+<img width="638" alt="image" src="https://user-images.githubusercontent.com/53370847/180845834-ba93a318-76bc-4872-9c3b-37f6b558e8e4.png">
 
-### Using `create-react-crx`
+## How to use / install YouLearn
+In this section are two ways described to get YouLearn to run:
 
-Type this into your terminal:
+### Use the release
+Download and install this release: https://github.com/mrnexeon/iui-project-chrome-ext/releases/tag/v0.0.1
+In order to install the extension drag the extension file into chrome under "Manage extensions"
 
-```sh
-npx create-react-crx
-```
+### Build it yourself
+You need NodeJS v16 and NPM for the following steps.
+1. Clone this repository
+2. Navigate into the folder and run `npm install`
+3. Build the extension
+4. Buid the extension
 
-Follow the prompts to setup your Chrome extension project.
+Use `npm run build` to build a production version of the extension **OR**
+Use `npm start` to build for developement
+> The development build gets rebuilt after saving of a file and reloads the extension and sites in chrome
 
-### Using `git clone`
-
-Type this into your terminal:
-
-```sh
-git clone https://github.com/extend-chrome/ts-react-boilerplate.git my-chrome-extension
-cd my-chrome-extension
-npm install
-```
-
-> 🖌️ Update your package name and version in `package.json` before you get started!
-
-### Development
-
-For development with automatic reloading:
-
-```sh
-npm run start
-```
-
-Open the [Extensions Dashboard](chrome://extensions), enable "Developer mode", click "Load unpacked", and choose the `dist` folder.
-
-When you make changes in `src` the background script and any content script will reload automatically.
-
-### Production
-
-When it's time to publish your Chrome extension, make a production build to submit to the Chrome Web Store. This boilerplate will use the version in `package.json`, unless you add a version to `src/manifest.json`.
-
-> Make sure you have updated the name and version of your extension in `package.json`.
-
-Run the following line:
-
-```sh
-npm run build
-```
-
-This will create a ZIP file with your package name and version in the `releases`
-folder.
-
-## Source Layout
-
-Your manifest is at `src/manifest.json`, and Rollup will bundle any files you
-include here. All the filepaths in your manifest should point to files in `src`.
-
-## Features
-
-- Uses Rollup to bundle your extension
-- Chrome Extension automatic reloader
-- Jest configuration for testing
-
-## Resources
-
-[Chrome Extension official documentation](https://developer.chrome.com/docs/webstore/)
-
-[How to Publish your extension step by step video tutorial](https://www.youtube.com/playlist?list=PLYlOQabA4Mm0bPiMKIBMgZK0u2jbYsrC6)
-
+5. Regardless of your building method (production or developement) the built extension is saved under `dist/`. To install the extension in chrome go to **Three dots > More tools > Extensions** or go to `chrome://extensions/`. Activate **Developer mode** in the top right corner. Then you can either drag the `dist/` folder into chrome or click on **Load unpacked** in the top left corner and choose the `dist/` directory.
+  
+  Congratulations! You have installed YouLean in your chrome browser. We recommend that you pin it for easy access.
